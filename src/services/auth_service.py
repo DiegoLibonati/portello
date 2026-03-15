@@ -1,40 +1,53 @@
-from typing import Any
-
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from src.data_access.user_dao import UserDAO
+from src.configs.logger_config import setup_logger
+from src.constants.messages import (
+    MESSAGE_ALREADY_EXISTS_USER,
+    MESSAGE_NOT_EXISTS_USER,
+    MESSAGE_NOT_VALID_FIELDS,
+    MESSAGE_NOT_VALID_MATCH_PASSWORD,
+    MESSAGE_NOT_VALID_PASSWORD,
+    MESSAGE_SUCCESS_LOGIN,
+    MESSAGE_SUCCESS_REGISTER,
+)
+from src.models.user_model import UserModel
+from src.services.user_service import UserService
+from src.utils.dialogs import ConflictDialogError, NotFoundDialogError, SuccessDialogInformation, ValidationDialogError
+
+logger = setup_logger("tkinter-app - auth_service.py")
 
 
 class AuthService:
-    def __init__(self, user_dao: UserDAO):
-        self._user_dao = user_dao
+    @staticmethod
+    def login(username: str, password: str) -> UserModel:
+        if not username or not password or username.isspace() or password.isspace():
+            raise ValidationDialogError(message=MESSAGE_NOT_VALID_FIELDS)
 
-    def login(self, username: str, password: str) -> tuple[dict[str, Any] | None, str]:
-        user = self._user_dao.find_by_username(username)
+        user = UserService.get_user_by_username(username=username)
+
         if not user:
-            return None, "The entered username does not exist in our database."
-        if not check_password_hash(user["password"], password):
-            return None, "The password does not match the user entered."
-        return user, ""
+            raise NotFoundDialogError(message=MESSAGE_NOT_EXISTS_USER)
 
-    def register(
-        self, username: str, password: str, confirm_password: str
-    ) -> tuple[bool, str]:
-        if (
-            not username
-            or not password
-            or not confirm_password
-            or username.isspace()
-            or password.isspace()
-        ):
-            return False, "You must enter valid fields."
+        if not check_password_hash(user["password"], password):
+            raise ValidationDialogError(message=MESSAGE_NOT_VALID_PASSWORD)
+
+        SuccessDialogInformation(message=MESSAGE_SUCCESS_LOGIN).open()
+        return UserModel(**user)
+
+    @staticmethod
+    def register(username: str, password: str, confirm_password: str) -> bool:
+        if not username or not password or not confirm_password or username.isspace() or password.isspace():
+            raise ValidationDialogError(message=MESSAGE_NOT_VALID_FIELDS)
 
         if password != confirm_password:
-            return False, "The passwords entered do not match."
+            raise ValidationDialogError(message=MESSAGE_NOT_VALID_MATCH_PASSWORD)
 
-        if self._user_dao.find_by_username(username):
-            return False, "The username already exists."
+        if UserService.get_user_by_username(username=username):
+            raise ConflictDialogError(message=MESSAGE_ALREADY_EXISTS_USER)
 
-        user = {"username": username, "password": generate_password_hash(password)}
-        self._user_dao.insert_user(user)
-        return True, "The user was successfully created."
+        user = UserModel(username=username, password=generate_password_hash(password))
+
+        UserService.add_user(user=user)
+
+        SuccessDialogInformation(message=MESSAGE_SUCCESS_REGISTER).open()
+        return True

@@ -1,14 +1,37 @@
-from typing import Optional
+from typing import Any
 
-from pymongo import MongoClient
+from pymongo.results import InsertOneResult
+
+from src.configs.mongo_config import mongo
+from src.constants.messages import MESSAGE_ERROR_DATABASE
+from src.utils.dialogs import InternalDialogError
 
 
 class UserDAO:
-    def __init__(self, db: MongoClient):
-        self._db = db
+    @staticmethod
+    def _get_collection():
+        if mongo.db is None:
+            raise InternalDialogError(message=MESSAGE_ERROR_DATABASE)
+        return mongo.db.users
 
-    def find_by_username(self, username: str) -> Optional[dict]:
-        return self._db.users.find_one({"username": username})
+    @staticmethod
+    def find_one_by_username(username: str) -> dict[str, Any] | None:
+        return UserDAO.parse_user(UserDAO._get_collection().find_one({"username": {"$regex": f"^{username}$", "$options": "i"}}))
 
-    def insert_user(self, user: dict) -> None:
-        self._db.users.insert_one(user)
+    @staticmethod
+    def insert_one(user: dict[str, Any]) -> InsertOneResult:
+        return UserDAO._get_collection().insert_one(user)
+
+    @staticmethod
+    def parse_users(users: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        return [UserDAO.parse_user(user) for user in users]
+
+    @staticmethod
+    def parse_user(user: dict[str, Any]) -> dict[str, Any]:
+        if not user:
+            return None
+
+        return {
+            **{k: v for k, v in user.items() if k != "_id"},
+            "_id": str(user["_id"]),
+        }

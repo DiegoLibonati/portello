@@ -1,0 +1,14 @@
+from tkinter import CENTER
+
+
+class Styles:
+    PRIMARY_COLOR = "#141B41"
+    SECONDARY_COLOR = "#306BAC"
+    WHITE_COLOR = "#FFFFFF"
+
+    FONT_ROBOTO = "Roboto"
+    FONT_ROBOTO_12 = f"{FONT_ROBOTO} 12"
+    FONT_ROBOTO_13 = f"{FONT_ROBOTO} 13"
+    FONT_ROBOTO_15 = f"{FONT_ROBOTO} 15"
+
+    ANCHOR_CENTER = CENTER

@@ -1,217 +1,67 @@
-from tkinter import Button, Entry, Label, StringVar, Tk, Toplevel
+from tkinter import Tk
 
+from src.configs.default_config import DefaultConfig
+from src.configs.logger_config import setup_logger
+from src.models.user_model import UserModel
 from src.services.auth_service import AuthService
-from src.utils.styles import (
-    ANCHOR_CENTER,
-    FONT_ROBOTO_12,
-    FONT_ROBOTO_13,
-    FONT_ROBOTO_15,
-    PRIMARY_COLOR,
-    SECONDARY_COLOR,
-    WHITE_COLOR,
-)
+from src.ui.styles import Styles
+from src.ui.views.login_view import LoginView
+from src.ui.views.main_view import MainView
+from src.ui.views.register_view import RegisterView
+from src.utils.exceptions_handler import exceptions_handler
+
+logger = setup_logger("login-program - interface_app.py")
 
 
 class InterfaceApp:
-    def __init__(
-        self, root: Tk, auth_service: AuthService, bg: str = PRIMARY_COLOR
-    ) -> None:
+    def __init__(self, root: Tk, config: DefaultConfig, styles: Styles = Styles()) -> None:
+        self.user: UserModel | None = None
+
+        self._styles = styles
+        self._config = config
         self._root = root
-        self._root.title("Login")
+        self._root.title("Template Tkinter")
         self._root.geometry("400x400")
         self._root.resizable(False, False)
-        self._root.config(bg=bg)
+        self._root.config(background=self._styles.PRIMARY_COLOR)
 
-        self.auth_service = auth_service
-        self.user = None
-
-        self._create_widgets()
+        self._login_view = LoginView(
+            root=self._root,
+            styles=self._styles,
+            on_login=self._login,
+            on_register=self._open_register,
+        )
+        self._login_view.pack(fill="both", expand=True)
 
     @property
     def username(self) -> str:
-        return self.user.get("username", "N/A") if self.user else "N/A"
+        return self.user.username if self.user else "N/A"
 
-    def _create_widgets(self) -> None:
-        self._text_confirm_login = StringVar(value="Welcome")
-        self._text_username_login = StringVar()
-        self._text_password_login = StringVar()
-
-        Label(
-            self._root,
-            text="Username",
-            font=FONT_ROBOTO_12,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=90, y=20)
-        Entry(
-            self._root,
-            width=20,
-            font=FONT_ROBOTO_15,
-            bg=SECONDARY_COLOR,
-            border=0,
-            fg=WHITE_COLOR,
-            textvariable=self._text_username_login,
-        ).place(x=200, y=60, anchor=ANCHOR_CENTER)
-
-        Label(
-            self._root,
-            text="Password",
-            font=FONT_ROBOTO_12,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=90, y=80)
-        Entry(
-            self._root,
-            width=20,
-            font=FONT_ROBOTO_15,
-            show="*",
-            bg=SECONDARY_COLOR,
-            border=0,
-            fg=WHITE_COLOR,
-            textvariable=self._text_password_login,
-        ).place(x=200, y=120, anchor=ANCHOR_CENTER)
-
-        Label(
-            self._root,
-            textvariable=self._text_confirm_login,
-            font=FONT_ROBOTO_13,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=200, y=255, anchor=ANCHOR_CENTER)
-
-        Button(
-            self._root,
-            text="Login",
-            width=15,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-            command=self._login,
-        ).place(x=200, y=300, anchor=ANCHOR_CENTER)
-        Button(
-            self._root,
-            text="Register",
-            width=15,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-            command=self._window_register,
-        ).place(x=200, y=340, anchor=ANCHOR_CENTER)
-
+    @exceptions_handler
     def _login(self) -> None:
-        username = self._text_username_login.get()
-        password = self._text_password_login.get()
-        user, msg = self.auth_service.login(username, password)
+        username = self._login_view.text_username.get()
+        password = self._login_view.text_password.get()
 
-        if not user:
-            self._text_confirm_login.set(msg)
-            return
-
+        user = AuthService.login(username=username, password=password)
         self.user = user
-        self._program()
 
-    def _window_register(self) -> None:
-        self._win_register = Toplevel(self._root)
-        self._win_register.title("Register")
-        self._win_register.geometry("400x400")
-        self._win_register.resizable(False, False)
-        self._win_register.config(bg=PRIMARY_COLOR)
+        MainView(root=self._root, styles=self._styles, username=self.username)
 
-        self._text_confirm_register = StringVar()
-        self._text_username_register = StringVar()
-        self._text_password_register = StringVar()
-        self._text_confirm_password_register = StringVar()
-
-        Label(
-            self._win_register,
-            text="Username",
-            font=FONT_ROBOTO_12,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=90, y=20)
-        Entry(
-            self._win_register,
-            width=20,
-            font=FONT_ROBOTO_15,
-            bg=SECONDARY_COLOR,
-            border=0,
-            fg=WHITE_COLOR,
-            textvariable=self._text_username_register,
-        ).place(x=200, y=60, anchor=ANCHOR_CENTER)
-
-        Label(
-            self._win_register,
-            text="Password",
-            font=FONT_ROBOTO_12,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=90, y=80)
-        Entry(
-            self._win_register,
-            width=20,
-            font=FONT_ROBOTO_15,
-            show="*",
-            bg=SECONDARY_COLOR,
-            border=0,
-            fg=WHITE_COLOR,
-            textvariable=self._text_password_register,
-        ).place(x=200, y=120, anchor=ANCHOR_CENTER)
-
-        Label(
-            self._win_register,
-            text="Confirm password",
-            font=FONT_ROBOTO_12,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=90, y=140)
-        Entry(
-            self._win_register,
-            width=20,
-            font=FONT_ROBOTO_15,
-            show="*",
-            bg=SECONDARY_COLOR,
-            border=0,
-            fg=WHITE_COLOR,
-            textvariable=self._text_confirm_password_register,
-        ).place(x=200, y=180, anchor=ANCHOR_CENTER)
-
-        Label(
-            self._win_register,
-            textvariable=self._text_confirm_register,
-            font=FONT_ROBOTO_13,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=200, y=255, anchor=ANCHOR_CENTER)
-
-        Button(
-            self._win_register,
-            text="Register",
-            width=15,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-            command=self._register,
-        ).place(x=200, y=340, anchor=ANCHOR_CENTER)
-
-    def _register(self) -> None:
-        ok, msg = self.auth_service.register(
-            self._text_username_register.get(),
-            self._text_password_register.get(),
-            self._text_confirm_password_register.get(),
+    @exceptions_handler
+    def _open_register(self) -> None:
+        self._register_view = RegisterView(
+            root=self._root,
+            styles=self._styles,
+            on_register=self._register,
         )
-        self._text_confirm_register.set(msg)
+
+    @exceptions_handler
+    def _register(self) -> None:
+        ok = AuthService.register(
+            username=self._register_view.text_username.get(),
+            password=self._register_view.text_password.get(),
+            confirm_password=self._register_view.text_confirm_password.get(),
+        )
+
         if ok:
-            self._win_register.destroy()
-
-    def _program(self) -> None:
-        self._win_program = Toplevel(self._root)
-        self._win_program.title("Program")
-        self._win_program.geometry("200x200")
-        self._win_program.resizable(False, False)
-        self._win_program.config(bg=PRIMARY_COLOR)
-
-        msg = f"Welcome {self.username}"
-        Label(
-            self._win_program,
-            text=msg,
-            font=FONT_ROBOTO_13,
-            bg=PRIMARY_COLOR,
-            fg=WHITE_COLOR,
-        ).place(x=100, y=100, anchor=ANCHOR_CENTER)
+            self._register_view.destroy()

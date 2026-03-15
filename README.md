@@ -9,13 +9,14 @@ The main goal is to explore and demonstrate best practices, patterns, and techno
 ## Getting Started
 
 1. Clone the repository
-2. Join to the correct path of the clone
-3. Execute: `python -m venv venv`
-4. Execute in Windows: `venv\Scripts\activate`
+2. Go to the repository folder and execute: `python -m venv venv`
+3. Execute in Windows: `venv\Scripts\activate`
+4. Execute in Linux/Mac: `source venv/bin/activate`
 5. Execute: `pip install -r requirements.txt`
-6. Execute: `pip install -r requirements.test.txt`
-7. You must execute the command: `docker-compose -f dev.docker-compose.yml up --force-recreate` in the terminal
-8. Use `python -m src.app` to execute program
+6. Execute: `pip install -r requirements.dev.txt`
+7. Execute: `pip install -r requirements.test.txt`
+8. You must execute the command: `docker-compose -f dev.docker-compose.yml up --force-recreate` in the terminal
+9. Use `python app.py` or `python -m src` to execute the program
 
 NOTE: You have to be standing in the folder containing the: `dev.docker-compose.yml` and you need to install `Docker Desktop` if you are in Windows.
 
@@ -31,8 +32,9 @@ I made a python program using tkinter as user interface. Basically I made a logi
 ## Technologies used
 
 1. Python >= 3.11
-2. Docker
-3. MongoDB
+2. Tkinter
+3. Docker
+4. MongoDB
 
 ## Libraries used
 
@@ -40,9 +42,15 @@ I made a python program using tkinter as user interface. Basically I made a logi
 
 ```
 pymongo==4.10.1
-Werkzeug==3.1.3
+werkzeug==3.1.6
+pydantic==2.11.9
 python-dotenv==1.0.1
+```
+
+#### Requirements.dev.txt
+```
 pre-commit==4.3.0
+pip-audit==2.7.3
 ```
 
 #### Requirements.test.txt
@@ -50,6 +58,9 @@ pre-commit==4.3.0
 ```
 pytest==8.4.2
 pytest-env==1.1.5
+pytest-cov==4.1.0
+pytest-timeout==2.3.1
+pytest-xdist==3.5.0
 ```
 
 #### Requirements.build.txt
@@ -68,9 +79,13 @@ https://user-images.githubusercontent.com/99032604/199149396-0e2f1703-c84e-4278-
 
 ## Testing
 
-1. Join to the correct path of the clone
-2. Execute in Windows: `venv\Scripts\activate`
-3. Execute: `pytest --log-cli-level=INFO`
+1. Go to the repository folder
+2. Execute: `python -m venv venv`
+3. Execute in Windows: `venv\Scripts\activate`
+4. Execute in Linux/Mac: `source venv/bin/activate`
+5. Execute: `pip install -r requirements.txt`
+6. Execute: `pip install -r requirements.test.txt`
+7. Execute: `pytest --log-cli-level=INFO`
 
 ## Build
 
@@ -78,20 +93,52 @@ You can generate a standalone executable (`.exe` on Windows, or binary on Linux/
 
 ### Windows
 
-1. Join to the correct path of the clone
+1. Go to the repository folder
 2. Activate your virtual environment: `venv\Scripts\activate`
 3. Install build dependencies: `pip install -r requirements.build.txt`
-4. Create the executable: `pyinstaller app.spec"`
+4. Create the executable: `pyinstaller app.spec`
 
 Alternatively, you can run the helper script: `build.bat`
 
 ### Linux / Mac
 
-1. Join to the correct path of the clone
+1. Go to the repository folder
 2. Activate your virtual environment: `source venv/bin/activate`
 3. Install build dependencies: `pip install -r requirements.build.txt`
-4. Create the executable: `pyinstaller app.spec"`
+4. Create the executable: `pyinstaller app.spec`
 
 Alternatively, you can run the helper script: `./build.sh`
 
+## Security Audit
+
+You can check your dependencies for known vulnerabilities using **pip-audit**.
+
+1. Go to the repository folder
+2. Activate your virtual environment
+3. Execute: `pip install -r requirements.dev.txt`
+4. Execute: `pip-audit -r requirements.txt`
+
+## Env Keys
+
+1. `ENVIRONMENT`: Defines the application environment. Accepts `development`, `production`, or `testing`.
+2. `MONGO_HOST`: Specifies the hostname or address where the MongoDB server is located. In this case, `host.docker.internal` allows a Docker container to connect to the host machine.
+3. `MONGO_PORT`: Defines the port on which the MongoDB server is listening for connections. The default MongoDB port is `27017`.
+4. `MONGO_USER`: Indicates the username for authenticating with the MongoDB database.
+5. `MONGO_PASS`: Contains the password associated with the user specified in `MONGO_USER` for authentication.
+6. `MONGO_DB_NAME`: Specifies the name of the database to which the application will connect within the MongoDB server.
+7. `MONGO_AUTH_SOURCE`: Defines the database where the user credentials will be verified. Typically set to `admin` when the credentials were created in that database.
+
+```
+ENVIRONMENT=development
+
+MONGO_HOST=host.docker.internal
+MONGO_PORT=27017
+MONGO_USER=admin
+MONGO_PASS=secret123
+MONGO_DB_NAME=login_db
+MONGO_AUTH_SOURCE=admin
+```
+
 ## Known Issues
+
+None at the moment.
