@@ -1,3 +1,4 @@
+import os
 import subprocess
 import time
 import tkinter as tk
@@ -35,14 +36,14 @@ def docker_db() -> None:
 
 @pytest.fixture(scope="session")
 def mongo_client(docker_db: None) -> MongoClient:
-    client: MongoClient = pymongo.MongoClient("mongodb://admin:secret123@localhost:27018/test_db?authSource=admin")
+    client: MongoClient = pymongo.MongoClient(os.environ["MONGO_URI"])
     yield client
     client.close()
 
 
 @pytest.fixture(scope="function")
 def mongo_db(mongo_client: MongoClient) -> Database:
-    db: Database = mongo_client["test_db"]
+    db: Database = mongo_client[os.environ["MONGO_DB_NAME"]]
     yield db
     for name in db.list_collection_names():
         db.drop_collection(name)

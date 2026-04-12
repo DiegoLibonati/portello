@@ -1,3 +1,5 @@
+import os
+
 from src.configs.default_config import DefaultConfig
 from src.configs.testing_config import TestingConfig
 
@@ -21,7 +23,7 @@ class TestTestingConfig:
 
     def test_mongo_db_name_from_env(self) -> None:
         config: TestingConfig = TestingConfig()
-        assert config.MONGO_DB_NAME == "test_db"
+        assert config.MONGO_DB_NAME == os.environ["MONGO_DB_NAME"]
 
     def test_mongo_uri_is_string(self) -> None:
         config: TestingConfig = TestingConfig()
@@ -33,4 +35,4 @@ class TestTestingConfig:
 
     def test_mongo_uri_contains_test_db(self) -> None:
         config: TestingConfig = TestingConfig()
-        assert "test_db" in config.MONGO_URI
+        assert os.environ["MONGO_DB_NAME"] in config.MONGO_URI
