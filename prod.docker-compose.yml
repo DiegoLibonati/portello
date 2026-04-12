@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  login-db:
+  portello-db:
     image: mongo:7
     restart: always
     environment:

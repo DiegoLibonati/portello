@@ -10,7 +10,7 @@ from src.ui.views.main_view import MainView
 from src.ui.views.register_view import RegisterView
 from src.utils.exceptions_handler import exceptions_handler
 
-logger = setup_logger("login-program - interface_app.py")
+logger = setup_logger("portello - interface_app.py")
 
 
 class InterfaceApp:

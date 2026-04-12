@@ -1,13 +1,13 @@
 
 [project]
-name = "login-program"
+name = "portello"
 version = "1.0.0"
-description = "I made a python program using tkinter as user interface. Basically I made a login system in which if you don't have an account you can register. It will ask you for a username and password, use mongo db to store the information in a database and werkzeug for password encryption. It is very useful to access a program that is protected by this login, if you have an account you will be able to access the program, otherwise you will not be able to."
+description = "Portello is a desktop authentication system built with Python and Tkinter. It provides a complete login and registration flow for any desktop application that needs to protect access behind user credentials."
 requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
 pythonpath = "."
-testpaths = ["test"]
+testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"

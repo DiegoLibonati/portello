@@ -14,7 +14,7 @@ from src.models.user_model import UserModel
 from src.services.user_service import UserService
 from src.utils.dialogs import ConflictDialogError, NotFoundDialogError, SuccessDialogInformation, ValidationDialogError
 
-logger = setup_logger("tkinter-app - auth_service.py")
+logger = setup_logger("portello - auth_service.py")
 
 
 class AuthService:

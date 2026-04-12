@@ -1,4 +1,4 @@
-# Login Program
+# Portello
 
 ## Educational Purpose
 
@@ -27,7 +27,15 @@ NOTE: You have to be standing in the folder containing the: `dev.docker-compose.
 
 ## Description
 
-I made a python program using tkinter as user interface. Basically I made a login system in which if you don't have an account you can register. It will ask you for a username and password, use mongo db to store the information in a database and werkzeug for password encryption. It is very useful to access a program that is protected by this login, if you have an account you will be able to access the program, otherwise you will not be able to.
+**Portello** is a desktop authentication system built with Python and Tkinter. It provides a complete login and registration flow for any desktop application that needs to protect access behind user credentials.
+
+The application presents a graphical interface where users can either log in with an existing account or register a new one. On login, the entered username and password are validated against records stored in a MongoDB database. Passwords are never stored in plain text — they are hashed using Werkzeug's PBKDF2-based password hashing before being persisted, and verified securely at login time. On registration, the user provides a username, a password, and a password confirmation; if the username is already taken, a conflict error is shown and the process is stopped.
+
+The architecture follows a strict layered pattern: the UI layer (Tkinter views and components) communicates exclusively with a service layer (AuthService, UserService), which in turn delegates database operations to a DAO layer (UserDAO) backed by PyMongo. Data integrity at the boundary is enforced by Pydantic models, which validate that fields are non-empty and strip surrounding whitespace before any data reaches the database. All errors — whether validation failures, database issues, or business rule violations — are surfaced to the user through Tkinter messagebox dialogs via a custom exception hierarchy, keeping the UI and error-handling logic fully decoupled.
+
+Configuration is environment-driven: the application supports development, production, and testing environments, each with its own config class that inherits from a shared base. Environment variables control the MongoDB connection (host, port, credentials, database name), so no secrets are hardcoded. For local development, a MongoDB instance is spun up via Docker Compose with a single command.
+
+The project also ships with a full test suite built on pytest, covering unit tests (models, services, utils, UI components) and integration tests (DAO layer against a real MongoDB test instance on a separate Docker container). It includes pre-commit hooks with Ruff for linting and formatting, a pip-audit setup for dependency vulnerability scanning, and a PyInstaller configuration to compile the application into a standalone executable for distribution on Windows, Linux, and macOS.
 
 ## Technologies used
 
@@ -72,11 +80,7 @@ pyinstaller==6.16.0
 
 ## Portfolio Link
 
-[`https://www.diegolibonati.com.ar/#/project/Login-Program`](https://www.diegolibonati.com.ar/#/project/Login-Program)
-
-## Video
-
-https://user-images.githubusercontent.com/99032604/199149396-0e2f1703-c84e-4278-ac90-e806f0aba018.mp4
+[`https://www.diegolibonati.com.ar/#/project/portello`](https://www.diegolibonati.com.ar/#/project/portello)
 
 ## Testing
 
@@ -136,7 +140,7 @@ MONGO_HOST=host.docker.internal
 MONGO_PORT=27017
 MONGO_USER=admin
 MONGO_PASS=secret123
-MONGO_DB_NAME=login_db
+MONGO_DB_NAME=portello_db
 MONGO_AUTH_SOURCE=admin
 ```
 
