@@ -2,7 +2,7 @@
 [project]
 name = "portello"
 version = "1.0.0"
-description = "Portello is a desktop authentication system built with Python and Tkinter. It provides a complete login and registration flow for any desktop application that needs to protect access behind user credentials."
+description = "Portello is a desktop authentication system built with Python and Tkinter."
 requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
