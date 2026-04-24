@@ -69,5 +69,5 @@ class TestExceptionsHandler:
         def fn() -> None:
             return None
 
-        result = fn()
+        result: None = fn()
         assert result is None

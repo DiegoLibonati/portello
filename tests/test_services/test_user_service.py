@@ -2,6 +2,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pymongo.results import InsertOneResult
 
 from src.models.user_model import UserModel
 from src.services.user_service import UserService
@@ -45,5 +46,5 @@ class TestUserService:
         mock_result: MagicMock = MagicMock()
         with patch("src.services.user_service.UserDAO.find_one_by_username", return_value=None):
             with patch("src.services.user_service.UserDAO.insert_one", return_value=mock_result):
-                result = UserService.add_user(user)
+                result: InsertOneResult = UserService.add_user(user)
         assert result is mock_result
