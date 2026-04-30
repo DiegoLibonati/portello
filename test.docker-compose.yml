@@ -1,6 +1,7 @@
 services:
   test-db:
     image: mongo:7.0
+    container_name: portello-db-test
     restart: unless-stopped
     ports:
       - "27018:27017"
