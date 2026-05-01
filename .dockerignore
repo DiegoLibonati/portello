@@ -1,0 +1,53 @@
+# Git
+.git/
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Virtual environment
+venv/
+.venv/
+
+# Test artifacts
+tests/
+.pytest_cache/
+.ruff_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.spec
+build.bat
+build.sh
+requirements.build.txt
+
+# Dev/test dependencies
+requirements.dev.txt
+requirements.test.txt
+
+# Docker
+*.docker-compose.yml
+.dockerignore
+
+# CI/tooling
+.pre-commit-config.yaml
+
+# Environment files
+.env
+.env.*
+
+# Editor / IDE
+.claude/
+.vscode/
+.idea/
+
+# Docs
+README.md
+LICENSE
+CLAUDE.md
