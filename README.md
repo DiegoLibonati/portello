@@ -6,25 +6,6 @@ This project was created primarily for **educational and learning purposes**.
 While it is well-structured and could technically be used in production, it is **not intended for commercialization**.  
 The main goal is to explore and demonstrate best practices, patterns, and technologies in software development.
 
-## Getting Started
-
-1. Clone the repository
-2. Go to the repository folder and execute: `python -m venv venv`
-3. Execute in Windows: `venv\Scripts\activate`
-4. Execute in Linux/Mac: `source venv/bin/activate`
-5. Execute: `pip install -r requirements.txt`
-6. Execute: `pip install -r requirements.dev.txt`
-7. Execute: `pip install -r requirements.test.txt`
-8. You must execute the command: `docker-compose -f dev.docker-compose.yml up --force-recreate` in the terminal
-9. Use `python app.py` or `python -m src` to execute the program
-
-NOTE: You have to be standing in the folder containing the: `dev.docker-compose.yml` and you need to install `Docker Desktop` if you are in Windows.
-
-### Pre-Commit for Development
-
-1. Once you're inside the virtual environment, let's install the hooks specified in the pre-commit. Execute: `pre-commit install`
-2. Now every time you try to commit, the pre-commit lint will run. If you want to do it manually, you can run the command: `pre-commit run --all-files`
-
 ## Description
 
 **Portello** is a desktop authentication system built with Python and Tkinter. It provides a complete login and registration flow for any desktop application that needs to protect access behind user credentials.
@@ -45,6 +26,8 @@ The project also ships with a full test suite built on pytest, covering unit tes
 4. MongoDB
 
 ## Libraries used
+
+The project splits its dependencies across four requirements files, one per use case (runtime, development tooling, testing, and packaging). You will install them in the next section.
 
 #### Requirements.txt
 
@@ -78,52 +61,31 @@ pytest-xdist==3.5.0
 pyinstaller==6.16.0
 ```
 
-## Portfolio Link
+## Getting Started
 
-[`https://www.diegolibonati.com.ar/#/project/portello`](https://www.diegolibonati.com.ar/#/project/portello)
+Follow these steps to bring up a working local environment:
 
-## Testing
-
-1. Go to the repository folder
-2. Execute: `python -m venv venv`
+1. Clone the repository
+2. Go to the repository folder and execute: `python -m venv venv`
 3. Execute in Windows: `venv\Scripts\activate`
 4. Execute in Linux/Mac: `source venv/bin/activate`
 5. Execute: `pip install -r requirements.txt`
-6. Execute: `pip install -r requirements.test.txt`
-7. Execute: `pytest --log-cli-level=INFO`
+6. Execute: `pip install -r requirements.dev.txt`
+7. Execute: `pip install -r requirements.test.txt`
+8. Copy the example env file into a real `.env` at the project root — Windows: `copy .env.example.dev .env`, Linux/Mac: `cp .env.example.dev .env`. The app will not start without it; see [Env Keys](#env-keys) below for what each variable means.
+9. You must execute the command: `docker-compose -f dev.docker-compose.yml up --force-recreate` in the terminal
+10. Use `python app.py` or `python -m src` to execute the program
 
-## Build
+NOTE: You have to be standing in the folder containing the: `dev.docker-compose.yml` and you need to install `Docker Desktop` if you are in Windows.
 
-You can generate a standalone executable (`.exe` on Windows, or binary on Linux/Mac) using **PyInstaller**.
+### Pre-Commit for Development
 
-### Windows
-
-1. Go to the repository folder
-2. Activate your virtual environment: `venv\Scripts\activate`
-3. Install build dependencies: `pip install -r requirements.build.txt`
-4. Create the executable: `pyinstaller app.spec`
-
-Alternatively, you can run the helper script: `build.bat`
-
-### Linux / Mac
-
-1. Go to the repository folder
-2. Activate your virtual environment: `source venv/bin/activate`
-3. Install build dependencies: `pip install -r requirements.build.txt`
-4. Create the executable: `pyinstaller app.spec`
-
-Alternatively, you can run the helper script: `./build.sh`
-
-## Security Audit
-
-You can check your dependencies for known vulnerabilities using **pip-audit**.
-
-1. Go to the repository folder
-2. Activate your virtual environment
-3. Execute: `pip install -r requirements.dev.txt`
-4. Execute: `pip-audit -r requirements.txt`
+1. Once you're inside the virtual environment, let's install the hooks specified in the pre-commit. Execute: `pre-commit install`
+2. Now every time you try to commit, the pre-commit lint will run. If you want to do it manually, you can run the command: `pre-commit run --all-files`
 
 ## Env Keys
+
+The `.env` file you copied during setup must define the following variables:
 
 1. `ENVIRONMENT`: Defines the application environment. Accepts `development`, `production`, or `testing`.
 2. `MONGO_HOST`: Specifies the hostname or address where the MongoDB server is located. In this case, `host.docker.internal` allows a Docker container to connect to the host machine.
@@ -144,6 +106,53 @@ MONGO_DB_NAME=portello_db
 MONGO_AUTH_SOURCE=admin
 ```
 
+## Testing
+
+With the local environment ready, you can run the test suite. Tests target a separate MongoDB instance and only require the runtime + test dependency sets (the dev tooling is not needed here):
+
+1. Go to the repository folder
+2. Execute: `python -m venv venv`
+3. Execute in Windows: `venv\Scripts\activate`
+4. Execute in Linux/Mac: `source venv/bin/activate`
+5. Execute: `pip install -r requirements.txt`
+6. Execute: `pip install -r requirements.test.txt`
+7. Execute: `pytest --log-cli-level=INFO`
+
+## Security Audit
+
+Once the test suite is green, verify that no pinned dependency has known CVEs using **pip-audit**.
+
+1. Go to the repository folder
+2. Activate your virtual environment
+3. Execute: `pip install -r requirements.dev.txt`
+4. Execute: `pip-audit -r requirements.txt`
+
+## Build
+
+After tests pass and dependencies are clean, you can generate a standalone executable (`.exe` on Windows, or binary on Linux/Mac) using **PyInstaller**.
+
+### Windows
+
+1. Go to the repository folder
+2. Activate your virtual environment: `venv\Scripts\activate`
+3. Install build dependencies: `pip install -r requirements.build.txt`
+4. Create the executable: `pyinstaller app.spec`
+
+Alternatively, you can run the helper script: `build.bat`
+
+### Linux / Mac
+
+1. Go to the repository folder
+2. Activate your virtual environment: `source venv/bin/activate`
+3. Install build dependencies: `pip install -r requirements.build.txt`
+4. Create the executable: `pyinstaller app.spec`
+
+Alternatively, you can run the helper script: `./build.sh`
+
 ## Known Issues
 
 None at the moment.
+
+## Portfolio Link
+
+[`https://www.diegolibonati.com.ar/#/project/portello`](https://www.diegolibonati.com.ar/#/project/portello)
