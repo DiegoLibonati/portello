@@ -1,10 +1,10 @@
-from tkinter import Label, Toplevel
+from tkinter import Label, Misc, Toplevel
 
 from src.ui.styles import Styles
 
 
 class MainView(Toplevel):
-    def __init__(self, root, styles: Styles, username: str) -> None:
+    def __init__(self, root: Misc, styles: Styles, username: str) -> None:
         super().__init__(root)
         self._styles = styles
 

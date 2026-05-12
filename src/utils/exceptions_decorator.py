@@ -16,14 +16,14 @@ P = ParamSpec("P")
 R = TypeVar("R")
 
 
-def exceptions_handler(fn: Callable[P, R]) -> Callable[P, R]:
+def exceptions_decorator(fn: Callable[P, R]) -> Callable[P, R]:
     @wraps(fn)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         try:
             return fn(*args, **kwargs)
 
-        except ValidationError as _e:
-            # logger.error("Validation error: %s", e)
+        except ValidationError as e:
+            logger.error("Validation error: %s", e)
             raise ValidationDialogError(message=MESSAGE_ERROR_PYDANTIC)
 
         except PyMongoError:

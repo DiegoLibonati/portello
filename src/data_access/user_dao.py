@@ -16,7 +16,11 @@ class UserDAO:
 
     @staticmethod
     def find_one_by_username(username: str) -> dict[str, Any] | None:
-        return UserDAO.parse_user(UserDAO._get_collection().find_one({"username": {"$regex": f"^{username}$", "$options": "i"}}))
+        return UserDAO.parse_user(
+            UserDAO._get_collection().find_one(
+                {"username": {"$regex": f"^{username}$", "$options": "i"}}
+            )
+        )
 
     @staticmethod
     def insert_one(user: dict[str, Any]) -> InsertOneResult:

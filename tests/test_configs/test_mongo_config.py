@@ -1,5 +1,8 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
 
+from src.configs.default_config import DefaultConfig
 from src.configs.mongo_config import Mongo, mongo
 from src.configs.testing_config import TestingConfig
 
@@ -19,6 +22,29 @@ class TestMongo:
 
     def test_module_level_mongo_is_mongo_instance(self) -> None:
         assert isinstance(mongo, Mongo)
+
+    def test_connect_sets_client_via_mock(self) -> None:
+        m: Mongo = Mongo()
+        config: DefaultConfig = DefaultConfig()
+        mock_client: MagicMock = MagicMock()
+        with patch("src.configs.mongo_config.MongoClient", return_value=mock_client):
+            m.connect(config)
+        assert m.client is mock_client
+
+    def test_connect_sets_db_via_mock(self) -> None:
+        m: Mongo = Mongo()
+        config: DefaultConfig = DefaultConfig()
+        mock_client: MagicMock = MagicMock()
+        with patch("src.configs.mongo_config.MongoClient", return_value=mock_client):
+            m.connect(config)
+        assert m.db is mock_client[config.MONGO_DB_NAME]
+
+    def test_disconnect_closes_client(self) -> None:
+        m: Mongo = Mongo()
+        mock_client: MagicMock = MagicMock()
+        m.client = mock_client
+        m.disconnect()
+        mock_client.close.assert_called_once()
 
     @pytest.mark.integration
     def test_connect_sets_client(self, docker_db: None) -> None:

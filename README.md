@@ -78,6 +78,19 @@ Follow these steps to bring up a working local environment:
 
 NOTE: You have to be standing in the folder containing the: `dev.docker-compose.yml` and you need to install `Docker Desktop` if you are in Windows.
 
+> **Alternative install via `pyproject.toml`:** instead of running the three
+> `pip install -r requirements*.txt` commands above, you can install the
+> runtime dependencies together with the dev and test extras in a single
+> command using PEP 621 optional dependencies:
+>
+> ```bash
+> pip install -e ".[dev,test]"
+> ```
+>
+> The `requirements*.txt` files are kept as pinned lockfiles; the
+> `pyproject.toml` declarations are the canonical, unpinned source of
+> truth used by tooling like `pip-audit`, `dependabot`, and IDEs.
+
 ### Pre-Commit for Development
 
 1. Once you're inside the virtual environment, let's install the hooks specified in the pre-commit. Execute: `pre-commit install`
@@ -130,6 +143,15 @@ Once the test suite is green, verify that no pinned dependency has known CVEs us
 ## Build
 
 After tests pass and dependencies are clean, you can generate a standalone executable (`.exe` on Windows, or binary on Linux/Mac) using **PyInstaller**.
+
+> **WARNING — Production secrets:** `app.spec` bundles `.env` into the
+> generated executable. Real production secrets must NEVER be placed in
+> the repo-level `.env` (the one you use for local development against
+> the dev Docker MongoDB). Instead, create a separate production env
+> file (for example `.env.prod` or `dist.env`) outside of source control,
+> place it at the project root as `.env` only at build time (or update
+> the path in `app.spec`), and then run PyInstaller. Treat the bundled
+> `.env` as a build artifact, not as a tracked file.
 
 ### Windows
 

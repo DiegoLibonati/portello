@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.constants.messages import MESSAGE_ERROR_APP
+from src.constants.messages import MESSAGE_ERROR_APP, MESSAGE_NOT_FOUND_DIALOG_TYPE
 from src.utils.dialogs import (
     AuthenticationDialogError,
     BaseDialog,
@@ -82,6 +82,16 @@ class TestBaseDialog:
 
     def test_info_constant_value(self) -> None:
         assert BaseDialog.INFO == "Info"
+
+    def test_open_with_unknown_dialog_type_falls_back_to_showerror(self) -> None:
+        class UnknownTypeDialog(BaseDialog):
+            dialog_type = "UNKNOWN_TYPE"
+
+        dialog: UnknownTypeDialog = UnknownTypeDialog(message="fallback")
+        mock_showerror: MagicMock = MagicMock()
+        with patch("src.utils.dialogs.messagebox.showerror", mock_showerror):
+            dialog.open()
+        mock_showerror.assert_called_once_with(BaseDialog.ERROR, MESSAGE_NOT_FOUND_DIALOG_TYPE)
 
 
 class TestBaseDialogError:

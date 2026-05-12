@@ -9,9 +9,7 @@ from src.configs.mongo_config import mongo
 from src.configs.production_config import ProductionConfig
 from src.configs.testing_config import TestingConfig
 from src.ui.interface_app import InterfaceApp
-from src.utils.error_handler import error_handler
-
-logger = setup_logger("portello - app.py")
+from src.utils.tkinter_exception_hook import tkinter_exception_hook
 
 CONFIG_MAP = {
     "development": DevelopmentConfig,
@@ -21,12 +19,13 @@ CONFIG_MAP = {
 
 
 def main(environment: str = "production") -> None:
+    logger = setup_logger("portello - app.py")
     load_dotenv()
 
     environment = os.getenv("ENVIRONMENT", environment)
 
     root = Tk()
-    root.report_callback_exception = error_handler
+    root.report_callback_exception = tkinter_exception_hook
 
     config_class = CONFIG_MAP.get(environment, ProductionConfig)
     config = config_class()

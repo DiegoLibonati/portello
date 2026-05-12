@@ -1,4 +1,5 @@
 from typing import Any
+from unittest.mock import MagicMock, patch
 
 import pytest
 from bson import ObjectId
@@ -30,7 +31,12 @@ class TestUserDAOParseUser:
 
     def test_parse_user_preserves_all_extra_fields(self) -> None:
         oid: ObjectId = ObjectId()
-        user: dict[str, Any] = {"_id": oid, "username": "alice", "password": "hash", "role": "admin"}
+        user: dict[str, Any] = {
+            "_id": oid,
+            "username": "alice",
+            "password": "hash",
+            "role": "admin",
+        }
         result: dict[str, Any] = UserDAO.parse_user(user)
         assert result["username"] == "alice"
         assert result["password"] == "hash"
@@ -74,10 +80,39 @@ class TestUserDAOGetCollection:
         finally:
             mongo.db = original_db
 
+    def test_returns_users_collection_when_db_connected(self) -> None:
+        mock_db: MagicMock = MagicMock()
+        original_db = mongo.db
+        try:
+            mongo.db = mock_db
+            result = UserDAO._get_collection()
+        finally:
+            mongo.db = original_db
+        assert result is mock_db.users
+
+    def test_find_one_by_username_returns_none_when_collection_returns_none(self) -> None:
+        mock_collection: MagicMock = MagicMock()
+        mock_collection.find_one.return_value = None
+        with patch.object(UserDAO, "_get_collection", return_value=mock_collection):
+            result: dict[str, Any] | None = UserDAO.find_one_by_username("ghost")
+        assert result is None
+
+    def test_insert_one_delegates_to_collection(self) -> None:
+        mock_collection: MagicMock = MagicMock()
+        mock_result: MagicMock = MagicMock()
+        mock_collection.insert_one.return_value = mock_result
+        user_data: dict[str, Any] = {"username": "alice", "password": "hash"}
+        with patch.object(UserDAO, "_get_collection", return_value=mock_collection):
+            result = UserDAO.insert_one(user_data)
+        assert result is mock_result
+        mock_collection.insert_one.assert_called_once_with(user_data)
+
 
 class TestUserDAOIntegration:
     @pytest.mark.integration
-    def test_find_one_by_username_returns_none_when_not_found(self, connected_mongo: Database) -> None:
+    def test_find_one_by_username_returns_none_when_not_found(
+        self, connected_mongo: Database
+    ) -> None:
         result: dict[str, Any] | None = UserDAO.find_one_by_username("nonexistent_user_xyz")
         assert result is None
 

@@ -3,12 +3,12 @@ from pymongo.errors import PyMongoError
 
 from src.models.user_model import UserModel
 from src.utils.dialogs import InternalDialogError, ValidationDialogError
-from src.utils.exceptions_handler import exceptions_handler
+from src.utils.exceptions_decorator import exceptions_decorator
 
 
 class TestExceptionsHandler:
     def test_passthrough_on_success(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def fn() -> str:
             return "ok"
 
@@ -16,7 +16,7 @@ class TestExceptionsHandler:
         assert result == "ok"
 
     def test_passes_arguments_to_wrapped_function(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def fn(a: int, b: int) -> int:
             return a + b
 
@@ -24,7 +24,7 @@ class TestExceptionsHandler:
         assert result == 5
 
     def test_catches_pydantic_validation_error_raises_validation_dialog(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def fn() -> None:
             UserModel(username="", password="")
 
@@ -32,7 +32,7 @@ class TestExceptionsHandler:
             fn()
 
     def test_catches_pymongo_error_raises_internal_dialog(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def fn() -> None:
             raise PyMongoError("connection failed")
 
@@ -40,7 +40,7 @@ class TestExceptionsHandler:
             fn()
 
     def test_dialog_errors_propagate_unchanged(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def fn() -> None:
             raise ValidationDialogError(message="from dialog")
 
@@ -49,7 +49,7 @@ class TestExceptionsHandler:
         assert exc_info.value.message == "from dialog"
 
     def test_internal_dialog_error_propagates_unchanged(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def fn() -> None:
             raise InternalDialogError(message="internal msg")
 
@@ -58,14 +58,14 @@ class TestExceptionsHandler:
         assert exc_info.value.message == "internal msg"
 
     def test_preserves_function_name(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def my_named_function() -> None:
             pass
 
         assert my_named_function.__name__ == "my_named_function"
 
     def test_preserves_function_return_value_none(self) -> None:
-        @exceptions_handler
+        @exceptions_decorator
         def fn() -> None:
             return None
 
