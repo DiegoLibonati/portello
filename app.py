@@ -4,7 +4,6 @@ from tkinter import Tk
 from dotenv import load_dotenv
 
 from src.configs.development_config import DevelopmentConfig
-from src.configs.logger_config import setup_logger
 from src.configs.mongo_config import mongo
 from src.configs.production_config import ProductionConfig
 from src.configs.testing_config import TestingConfig
@@ -19,7 +18,6 @@ CONFIG_MAP = {
 
 
 def main(environment: str = "production") -> None:
-    logger = setup_logger("portello - app.py")
     load_dotenv()
 
     environment = os.getenv("ENVIRONMENT", environment)
@@ -31,10 +29,8 @@ def main(environment: str = "production") -> None:
     config = config_class()
 
     mongo.connect(config=config)
-    interface_app = InterfaceApp(root=root, config=config)
+    InterfaceApp(root=root, config=config)
     root.mainloop()
-
-    logger.info("App finished: %s", interface_app)
 
 
 if __name__ == "__main__":

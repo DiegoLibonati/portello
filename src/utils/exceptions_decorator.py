@@ -22,8 +22,8 @@ def exceptions_decorator(fn: Callable[P, R]) -> Callable[P, R]:
         try:
             return fn(*args, **kwargs)
 
-        except ValidationError as e:
-            logger.error("Validation error: %s", e)
+        except ValidationError:
+            # logger.error("Validation error: %s", e)
             raise ValidationDialogError(message=MESSAGE_ERROR_PYDANTIC)
 
         except PyMongoError:
