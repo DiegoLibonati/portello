@@ -17,12 +17,16 @@ class TestUserService:
 
     def test_get_user_by_username_returns_user_dict(self) -> None:
         user_data: dict[str, str] = {"username": "alice", "password": "hash", "_id": "abc123"}
-        with patch("src.services.user_service.UserDAO.find_one_by_username", return_value=user_data):
+        with patch(
+            "src.services.user_service.UserDAO.find_one_by_username", return_value=user_data
+        ):
             result: dict[str, Any] | None = UserService.get_user_by_username("alice")
         assert result == user_data
 
     def test_get_user_by_username_passes_username_to_dao(self) -> None:
-        with patch("src.services.user_service.UserDAO.find_one_by_username", return_value=None) as mock_find:
+        with patch(
+            "src.services.user_service.UserDAO.find_one_by_username", return_value=None
+        ) as mock_find:
             UserService.get_user_by_username("alice")
         mock_find.assert_called_once_with(username="alice")
 
@@ -37,7 +41,9 @@ class TestUserService:
         user: UserModel = UserModel(username="newuser", password="pass")
         mock_result: MagicMock = MagicMock()
         with patch("src.services.user_service.UserDAO.find_one_by_username", return_value=None):
-            with patch("src.services.user_service.UserDAO.insert_one", return_value=mock_result) as mock_insert:
+            with patch(
+                "src.services.user_service.UserDAO.insert_one", return_value=mock_result
+            ) as mock_insert:
                 UserService.add_user(user)
         mock_insert.assert_called_once_with(user=user.model_dump())
 

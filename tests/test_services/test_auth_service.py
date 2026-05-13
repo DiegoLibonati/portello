@@ -33,14 +33,18 @@ class TestAuthServiceLogin:
     def test_wrong_password_raises_validation_error(self) -> None:
         hashed: str = generate_password_hash("correct")
         user_data: dict[str, str] = {"username": "alice", "password": hashed}
-        with patch("src.services.auth_service.UserService.get_user_by_username", return_value=user_data):
+        with patch(
+            "src.services.auth_service.UserService.get_user_by_username", return_value=user_data
+        ):
             with pytest.raises(ValidationDialogError):
                 AuthService.login(username="alice", password="wrong")
 
     def test_login_success_returns_user_model(self) -> None:
         hashed: str = generate_password_hash("correct")
         user_data: dict[str, str] = {"username": "alice", "password": hashed}
-        with patch("src.services.auth_service.UserService.get_user_by_username", return_value=user_data):
+        with patch(
+            "src.services.auth_service.UserService.get_user_by_username", return_value=user_data
+        ):
             with patch("src.services.auth_service.SuccessDialogInformation") as mock_dialog:
                 mock_dialog.return_value.open = MagicMock()
                 result: UserModel = AuthService.login(username="alice", password="correct")
@@ -50,7 +54,9 @@ class TestAuthServiceLogin:
     def test_login_success_calls_dialog_open(self) -> None:
         hashed: str = generate_password_hash("correct")
         user_data: dict[str, str] = {"username": "alice", "password": hashed}
-        with patch("src.services.auth_service.UserService.get_user_by_username", return_value=user_data):
+        with patch(
+            "src.services.auth_service.UserService.get_user_by_username", return_value=user_data
+        ):
             with patch("src.services.auth_service.SuccessDialogInformation") as mock_dialog:
                 mock_instance: MagicMock = MagicMock()
                 mock_dialog.return_value = mock_instance
@@ -81,7 +87,9 @@ class TestAuthServiceRegister:
 
     def test_existing_user_raises_conflict_error(self) -> None:
         existing: dict[str, str] = {"username": "alice", "password": "hash", "_id": "abc"}
-        with patch("src.services.auth_service.UserService.get_user_by_username", return_value=existing):
+        with patch(
+            "src.services.auth_service.UserService.get_user_by_username", return_value=existing
+        ):
             with pytest.raises(ConflictDialogError):
                 AuthService.register(username="alice", password="pass", confirm_password="pass")
 
@@ -90,7 +98,9 @@ class TestAuthServiceRegister:
             with patch("src.services.auth_service.UserService.add_user"):
                 with patch("src.services.auth_service.SuccessDialogInformation") as mock_dialog:
                     mock_dialog.return_value.open = MagicMock()
-                    result: bool = AuthService.register(username="alice", password="pass", confirm_password="pass")
+                    result: bool = AuthService.register(
+                        username="alice", password="pass", confirm_password="pass"
+                    )
         assert result is True
 
     def test_register_success_calls_dialog_open(self) -> None:

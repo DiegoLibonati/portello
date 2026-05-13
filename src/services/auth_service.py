@@ -12,7 +12,12 @@ from src.constants.messages import (
 )
 from src.models.user_model import UserModel
 from src.services.user_service import UserService
-from src.utils.dialogs import ConflictDialogError, NotFoundDialogError, SuccessDialogInformation, ValidationDialogError
+from src.utils.dialogs import (
+    ConflictDialogError,
+    NotFoundDialogError,
+    SuccessDialogInformation,
+    ValidationDialogError,
+)
 
 logger = setup_logger("portello - auth_service.py")
 
@@ -36,7 +41,13 @@ class AuthService:
 
     @staticmethod
     def register(username: str, password: str, confirm_password: str) -> bool:
-        if not username or not password or not confirm_password or username.isspace() or password.isspace():
+        if (
+            not username
+            or not password
+            or not confirm_password
+            or username.isspace()
+            or password.isspace()
+        ):
             raise ValidationDialogError(message=MESSAGE_NOT_VALID_FIELDS)
 
         if password != confirm_password:

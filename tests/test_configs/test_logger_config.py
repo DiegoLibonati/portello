@@ -37,5 +37,7 @@ class TestSetupLogger:
 
     def test_handler_is_stream_handler(self) -> None:
         logger: logging.Logger = setup_logger("stream-handler-check-test")
-        stream_handlers: list[logging.Handler] = [h for h in logger.handlers if isinstance(h, logging.StreamHandler)]
+        stream_handlers: list[logging.Handler] = [
+            h for h in logger.handlers if isinstance(h, logging.StreamHandler)
+        ]
         assert len(stream_handlers) > 0

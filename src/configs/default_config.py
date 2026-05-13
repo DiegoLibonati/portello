@@ -15,7 +15,5 @@ class DefaultConfig:
         self.MONGO_PASS = os.getenv("MONGO_PASS", "secret123")
         self.MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "templates_db")
         self.MONGO_AUTH_SOURCE = os.getenv("MONGO_AUTH_SOURCE", "admin")
-        self.MONGO_URI = (
-            f"mongodb://{self.MONGO_USER}:{self.MONGO_PASS}@{self.MONGO_HOST}:{self.MONGO_PORT}/{self.MONGO_DB_NAME}?authSource={self.MONGO_AUTH_SOURCE}"
-        )
+        self.MONGO_URI = f"mongodb://{self.MONGO_USER}:{self.MONGO_PASS}@{self.MONGO_HOST}:{self.MONGO_PORT}/{self.MONGO_DB_NAME}?authSource={self.MONGO_AUTH_SOURCE}"
         self.JSON_AS_ASCII = False
