@@ -133,13 +133,11 @@ Once the test suite is green, verify that no pinned dependency has known CVEs us
 After tests pass and dependencies are clean, you can generate a standalone executable (`.exe` on Windows, or binary on Linux/Mac) using **PyInstaller**.
 
 > **WARNING — Production secrets:** `app.spec` bundles `.env` into the
-> generated executable. Real production secrets must NEVER be placed in
-> the repo-level `.env` (the one you use for local development against
-> the dev Docker MongoDB). Instead, create a separate production env
-> file (for example `.env.prod` or `dist.env`) outside of source control,
-> place it at the project root as `.env` only at build time (or update
-> the path in `app.spec`), and then run PyInstaller. Treat the bundled
-> `.env` as a build artifact, not as a tracked file.
+> generated executable. Before running PyInstaller, set production credentials
+> directly in `.env` — it is already gitignored and will not be committed.
+> Do not reuse your development `.env` (which points at the dev Docker MongoDB);
+> replace its values with real production credentials at build time.
+> Treat the bundled `.env` as a build artifact, not as a tracked file.
 
 ### Windows
 

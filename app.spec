@@ -2,15 +2,10 @@
 #
 # IMPORTANT — Production .env handling
 # ------------------------------------
-# The `.env` file bundled below MUST be a dedicated production env file
-# (for example `dist.env` or `.env.prod`), NOT the development `.env`
-# you use locally to point at the dev Docker MongoDB.
-#
-# The recommended workflow is to create a separate `.env.prod` (or
-# `dist.env`) containing real production credentials, copy it to `.env`
-# only at build time (or change the path below), and ensure it never
-# gets committed to source control. Never place real secrets in the
-# repo-level `.env`.
+# Before running PyInstaller, set production credentials directly in `.env`.
+# `.env` is gitignored and will not be committed. Do not reuse the
+# development `.env` that points at the dev Docker MongoDB; replace its
+# values with real production credentials at build time.
 
 a = Analysis(
     ['app.py'],
