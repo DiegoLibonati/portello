@@ -29,7 +29,7 @@ The project also ships with a full test suite built on pytest, covering unit tes
 
 Dependencies are declared in `pyproject.toml` using exact pins (`==`), split across four groups. The `requirements*.txt` files are thin wrappers that delegate to these declarations. You will install them in the next section.
 
-#### Runtime ([project.dependencies])
+#### Runtime (`[project.dependencies]`)
 
 ```
 pymongo==4.10.1
@@ -38,14 +38,15 @@ pydantic==2.11.9
 python-dotenv==1.0.1
 ```
 
-#### Dev ([project.optional-dependencies] dev)
+#### Dev (`[project.optional-dependencies]` dev)
+
 ```
 pre-commit==4.3.0
 pip-audit==2.7.3
 ruff==0.11.12
 ```
 
-#### Test ([project.optional-dependencies] test)
+#### Test (`[project.optional-dependencies]` test)
 
 ```
 pytest==8.4.2
@@ -55,7 +56,7 @@ pytest-timeout==2.3.1
 pytest-xdist==3.5.0
 ```
 
-#### Build ([project.optional-dependencies] build)
+#### Build (`[project.optional-dependencies]` build)
 
 ```
 pyinstaller==6.16.0
