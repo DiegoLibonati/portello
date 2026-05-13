@@ -27,9 +27,9 @@ The project also ships with a full test suite built on pytest, covering unit tes
 
 ## Libraries used
 
-The project splits its dependencies across four requirements files, one per use case (runtime, development tooling, testing, and packaging). You will install them in the next section.
+Dependencies are declared in `pyproject.toml` using exact pins (`==`), split across four groups. The `requirements*.txt` files are thin wrappers that delegate to these declarations. You will install them in the next section.
 
-#### Requirements.txt
+#### Runtime ([project.dependencies])
 
 ```
 pymongo==4.10.1
@@ -38,14 +38,14 @@ pydantic==2.11.9
 python-dotenv==1.0.1
 ```
 
-#### Requirements.dev.txt
+#### Dev ([project.optional-dependencies] dev)
 ```
 pre-commit==4.3.0
 pip-audit==2.7.3
 ruff==0.11.12
 ```
 
-#### Requirements.test.txt
+#### Test ([project.optional-dependencies] test)
 
 ```
 pytest==8.4.2
@@ -55,7 +55,7 @@ pytest-timeout==2.3.1
 pytest-xdist==3.5.0
 ```
 
-#### Requirements.build.txt
+#### Build ([project.optional-dependencies] build)
 
 ```
 pyinstaller==6.16.0
@@ -77,19 +77,6 @@ Follow these steps to bring up a working local environment:
 10. Use `python app.py` or `python -m src` to execute the program
 
 NOTE: You have to be standing in the folder containing the: `dev.docker-compose.yml` and you need to install `Docker Desktop` if you are in Windows.
-
-> **Alternative install via `pyproject.toml`:** instead of running the three
-> `pip install -r requirements*.txt` commands above, you can install the
-> runtime dependencies together with the dev and test extras in a single
-> command using PEP 621 optional dependencies:
->
-> ```bash
-> pip install -e ".[dev,test]"
-> ```
->
-> The `requirements*.txt` files are kept as pinned lockfiles; the
-> `pyproject.toml` declarations are the canonical, unpinned source of
-> truth used by tooling like `pip-audit`, `dependabot`, and IDEs.
 
 ### Pre-Commit for Development
 
