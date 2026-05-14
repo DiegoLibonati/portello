@@ -37,7 +37,7 @@ class AuthService:
             raise ValidationDialogError(message=MESSAGE_NOT_VALID_PASSWORD)
 
         SuccessDialogInformation(message=MESSAGE_SUCCESS_LOGIN).open()
-        return UserModel(**user)
+        return UserModel(username=user["username"], password=user["password"])
 
     @staticmethod
     def register(username: str, password: str, confirm_password: str) -> bool:
