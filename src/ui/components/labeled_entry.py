@@ -1,4 +1,5 @@
 from tkinter import Entry, Frame, Label, Misc, StringVar
+from typing import Any
 
 from src.ui.styles import Styles
 
@@ -26,7 +27,7 @@ class LabeledEntry(Frame):
             fg=self._styles.WHITE_COLOR,
         ).grid(row=0, column=0, padx=(20, 5), sticky="e")
 
-        entry_config = {
+        entry_config: dict[str, Any] = {
             "width": 20,
             "font": self._styles.FONT_ROBOTO_15,
             "bg": self._styles.SECONDARY_COLOR,

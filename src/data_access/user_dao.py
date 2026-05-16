@@ -27,11 +27,11 @@ class UserDAO:
         return UserDAO._get_collection().insert_one(user)
 
     @staticmethod
-    def parse_users(users: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    def parse_users(users: list[dict[str, Any]]) -> list[dict[str, Any] | None]:
         return [UserDAO.parse_user(user) for user in users]
 
     @staticmethod
-    def parse_user(user: dict[str, Any]) -> dict[str, Any]:
+    def parse_user(user: dict[str, Any] | None) -> dict[str, Any] | None:
         if not user:
             return None
 
